@@ -10,13 +10,152 @@
 		<comment>First tables</comment>
 		<sql>
 			<![CDATA[
-			
-				
-			
+			CREATE TABLE event_type (
+				evtp_cd_id UUID NOT NULL,
+				evtp_tx_name VARCHAR(150) NOT NULL,
+				CONSTRAINT pk_event_type PRIMARY KEY (evtp_cd_id)
+			);
+
+			CREATE TABLE team (
+				team_cd_id UUID NOT NULL,
+				team_tx_name VARCHAR(150) NOT NULL,
+				team_js_metadata JSONB,
+				CONSTRAINT pk_team PRIMARY KEY (team_cd_id)
+			);
+
+			CREATE TABLE event (
+				even_cd_id UUID NOT NULL,
+				even_tx_name VARCHAR(255) NOT NULL,
+				even_tx_description VARCHAR(255),
+				even_bt_regulation BYTEA,
+				evtp_cd_id UUID NOT NULL,
+				even_cd_parent UUID,
+				even_dt_created_at TIMESTAMPTZ NOT NULL,
+				even_dt_updated_at TIMESTAMPTZ,
+				CONSTRAINT pk_event PRIMARY KEY (even_cd_id),
+				CONSTRAINT fk_event_type FOREIGN KEY (evtp_cd_id) REFERENCES event_type(evtp_cd_id),
+				CONSTRAINT fk_event_parent FOREIGN KEY (even_cd_parent) REFERENCES event(even_cd_id)
+			);
+
+			CREATE TABLE event_status (
+				evst_cd_id UUID NOT NULL,
+				even_cd_id UUID,
+				evst_tx_status VARCHAR(50) NOT NULL,
+				evst_dt_start_date TIMESTAMPTZ NOT NULL,
+				evst_dt_finish_date TIMESTAMPTZ NOT NULL,
+				CONSTRAINT pk_event_status PRIMARY KEY (evst_cd_id),
+				CONSTRAINT fk_event_status_event FOREIGN KEY (even_cd_id) REFERENCES event(even_cd_id)
+			);
+
+			CREATE TABLE event_participant (
+				evpt_cd_id UUID NOT NULL,
+				usac_cd_id UUID,
+				evpt_tx_name VARCHAR(150) NOT NULL,
+				team_cd_id UUID,
+				evpt_js_metadata JSONB,
+				CONSTRAINT pk_event_participant PRIMARY KEY (evpt_cd_id),
+				CONSTRAINT fk_event_participant_team FOREIGN KEY (team_cd_id) REFERENCES team(team_cd_id)
+			);
+
+			CREATE TABLE event_minimal_participation (
+				evmp_cd_id UUID NOT NULL,
+				evmp_nm_quantity_events INTEGER NOT NULL,
+				evmp_nm_minimal_position INTEGER NOT NULL,
+				evca_cd_id UUID NOT NULL,
+				CONSTRAINT pk_event_minimal_participation PRIMARY KEY (evmp_cd_id)
+			);
+
+			CREATE TABLE event_category (
+				evct_cd_id UUID NOT NULL,
+				evct_tx_name VARCHAR(100) NOT NULL,
+				evct_nm_order INTEGER NOT NULL,
+				evct_nm_participants_limit INTEGER,
+				evmp_cd_id UUID,
+				even_cd_id UUID NOT NULL,
+				CONSTRAINT pk_event_category PRIMARY KEY (evct_cd_id),
+				CONSTRAINT fk_event_category_minimal_participation FOREIGN KEY (evmp_cd_id) REFERENCES event_minimal_participation(evmp_cd_id),
+				CONSTRAINT fk_event_category_event FOREIGN KEY (even_cd_id) REFERENCES event(even_cd_id)
+			);
+
+			ALTER TABLE event_minimal_participation ADD CONSTRAINT fk_event_minimal_participation_category FOREIGN KEY (evca_cd_id) REFERENCES event_category(evct_cd_id);
+
+			CREATE TABLE event_category_participant (
+				evct_cd_id UUID NOT NULL,
+				evpt_cd_id UUID NOT NULL,
+				CONSTRAINT pk_event_category_participant PRIMARY KEY (evct_cd_id, evpt_cd_id),
+				CONSTRAINT fk_evctpart_category FOREIGN KEY (evct_cd_id) REFERENCES event_category(evct_cd_id) ON DELETE CASCADE,
+				CONSTRAINT fk_evctpart_participant FOREIGN KEY (evpt_cd_id) REFERENCES event_participant(evpt_cd_id) ON DELETE CASCADE
+			);
+
+			CREATE TABLE event_category_team (
+				evct_cd_id UUID NOT NULL,
+				team_cd_id UUID NOT NULL,
+				CONSTRAINT pk_event_category_team PRIMARY KEY (evct_cd_id, team_cd_id),
+				CONSTRAINT fk_evctteam_category FOREIGN KEY (evct_cd_id) REFERENCES event_category(evct_cd_id) ON DELETE CASCADE,
+				CONSTRAINT fk_evctteam_team FOREIGN KEY (team_cd_id) REFERENCES team(team_cd_id) ON DELETE CASCADE
+			);
+
+			CREATE TABLE event_category_result (
+				evcr_cd_id UUID NOT NULL,
+				evcr_tx_score_type VARCHAR(20) NOT NULL,
+				usac_cd_id UUID,
+				evcr_tx_participant_name VARCHAR(150),
+				team_cd_id UUID,
+				evcr_tx_team_name VARCHAR(150),
+				evcr_nm_position INTEGER NOT NULL,
+				evcr_nm_points DECIMAL(10, 2) NOT NULL,
+				evcr_tx_status VARCHAR(20) NOT NULL,
+				evcr_js_metadata JSONB,
+				evct_cd_id UUID NOT NULL,
+				CONSTRAINT pk_event_category_result PRIMARY KEY (evcr_cd_id),
+				CONSTRAINT fk_event_category_result_category FOREIGN KEY (evct_cd_id) REFERENCES event_category(evct_cd_id)
+			);
+
+			CREATE TABLE event_category_score (
+				evcs_cd_id UUID NOT NULL,
+				evcs_nm_position INTEGER NOT NULL,
+				evcs_nm_points DECIMAL(10, 2) NOT NULL,
+				evcs_tx_score_type VARCHAR(20) NOT NULL,
+				evct_cd_id UUID NOT NULL,
+				CONSTRAINT pk_event_category_score PRIMARY KEY (evcs_cd_id),
+				CONSTRAINT fk_event_category_score_category FOREIGN KEY (evct_cd_id) REFERENCES event_category(evct_cd_id)
+			);
+
+			CREATE TABLE team_hierarchy (
+				team_cd_id UUID NOT NULL,
+				usac_cd_id UUID NOT NULL,
+				tehi_tx_role VARCHAR(50) NOT NULL,
+				CONSTRAINT pk_team_hierarchy PRIMARY KEY (team_cd_id, usac_cd_id),
+				CONSTRAINT fk_team_hierarchy_team FOREIGN KEY (team_cd_id) REFERENCES team(team_cd_id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX idx_event_evtp ON event(evtp_cd_id);
+			CREATE INDEX idx_event_parent ON event(even_cd_parent);
+			CREATE INDEX idx_event_status_event ON event_status(even_cd_id);
+			CREATE INDEX idx_event_participant_team ON event_participant(team_cd_id);
+			CREATE INDEX idx_event_minimal_participation_category ON event_minimal_participation(evca_cd_id);
+			CREATE INDEX idx_event_category_minimal ON event_category(evmp_cd_id);
+			CREATE INDEX idx_event_category_event ON event_category(even_cd_id);
+			CREATE INDEX idx_evctpart_participant ON event_category_participant(evpt_cd_id);
+			CREATE INDEX idx_evctteam_team ON event_category_team(team_cd_id);
+			CREATE INDEX idx_event_category_result_category ON event_category_result(evct_cd_id);
+			CREATE INDEX idx_event_category_score_category ON event_category_score(evct_cd_id);
 			]]>
 		</sql>
 
 		<rollback>
+			DROP TABLE IF EXISTS team_hierarchy;
+			DROP TABLE IF EXISTS event_category_score;
+			DROP TABLE IF EXISTS event_category_result;
+			DROP TABLE IF EXISTS event_category_team;
+			DROP TABLE IF EXISTS event_category_participant;
+			DROP TABLE IF EXISTS event_category;
+			DROP TABLE IF EXISTS event_minimal_participation;
+			DROP TABLE IF EXISTS event_participant;
+			DROP TABLE IF EXISTS event_status;
+			DROP TABLE IF EXISTS event;
+			DROP TABLE IF EXISTS team;
+			DROP TABLE IF EXISTS event_type;
 		</rollback>
 
 	</changeSet>

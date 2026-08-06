@@ -1,4 +1,4 @@
-package com.justen.events.domain.entity;
+package com.justen.events.core.types;
 
 import java.io.Serializable;
 import java.util.UUID;

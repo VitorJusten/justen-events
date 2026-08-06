@@ -3,6 +3,7 @@ package com.justen.events.domain.entity;
 import java.util.UUID;
 
 import com.justen.events.core.enums.TeamRoleEnum;
+import com.justen.events.core.types.TeamHierarchyId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -31,7 +32,6 @@ public class TeamHierarchy {
 	@EmbeddedId
 	@EqualsAndHashCode.Include
 	private TeamHierarchyId id;
-
 
 	@MapsId("teamId")
 	@ManyToOne(fetch = FetchType.LAZY)

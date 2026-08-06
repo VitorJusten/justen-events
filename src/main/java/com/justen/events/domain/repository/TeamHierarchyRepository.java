@@ -2,8 +2,8 @@ package com.justen.events.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.justen.events.core.types.TeamHierarchyId;
 import com.justen.events.domain.entity.TeamHierarchy;
-import com.justen.events.domain.entity.TeamHierarchyId;
 
 /**
  * 

@@ -28,5 +28,24 @@ public class EventCategoryResultInputDto {
 	private EventResultStatusEnum status;
 	private String metadata;
 	private UUID categoryId;
+
+	public com.justen.events.domain.entity.EventCategoryResult toEntity() {
+		com.justen.events.domain.entity.EventCategoryResult result = new com.justen.events.domain.entity.EventCategoryResult();
+		result.setScoreType(this.scoreType);
+		result.setUserId(this.userId);
+		result.setParticipantName(this.participantName);
+		result.setTeamId(this.teamId);
+		result.setTeamName(this.teamName);
+		result.setPosition(this.position);
+		result.setPoints(this.points);
+		result.setStatus(this.status);
+		result.setMetadata(this.metadata);
+		if (this.categoryId != null) {
+			com.justen.events.domain.entity.EventCategory category = new com.justen.events.domain.entity.EventCategory();
+			category.setId(this.categoryId);
+			result.setCategory(category);
+		}
+		return result;
+	}
 	
 }
