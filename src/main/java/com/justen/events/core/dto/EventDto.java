@@ -1,4 +1,4 @@
-package com.justen.events.core.dto.input;
+package com.justen.events.core.dto;
 
 import java.time.OffsetDateTime;
 import java.util.List;

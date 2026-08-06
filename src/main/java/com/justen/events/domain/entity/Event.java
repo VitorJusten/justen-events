@@ -4,14 +4,10 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import com.justen.events.core.enums.EventStatusEnum;
-
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -49,15 +45,12 @@ public class Event {
 	@Column(name = "even_tx_description")
 	private String description;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "even_tx_status", nullable = false)
-	private EventStatusEnum status;
-
-	@Column(name = "even_dt_start_date", nullable = false)
-	private OffsetDateTime startDate;
-
-	@Column(name = "even_dt_end_date", nullable = false)
-	private OffsetDateTime endDate;
+	@OneToMany(
+			mappedBy = "event",
+			fetch = FetchType.LAZY,
+			cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	private List<EventStatus> status;
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)

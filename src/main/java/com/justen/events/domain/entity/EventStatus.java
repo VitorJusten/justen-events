@@ -1,17 +1,20 @@
 package com.justen.events.domain.entity;
 
-import java.util.List;
+import java.time.OffsetDateTime;
 import java.util.UUID;
+
+import com.justen.events.core.enums.EventStatusEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,28 +29,27 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "event_minimal_participation")
-public class EventMinimalParticipation {
+@Table(name = "event_status")
+public class EventStatus {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
-	@Column(name = "evmp_cd_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "evst_cd_id", nullable = false)
 	private UUID id;
 	
-	@OneToMany(
-			mappedBy = "category",
-			fetch = FetchType.LAZY)
-	private List<Event> events;
-
-	@Column(name = "evmp_nm_quantity_events", nullable = false)
-	private Integer quantityEvents;
-
-	@Column(name = "evmp_nm_minimal_position", nullable = false)
-	private Integer minimalPosition;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "evca_cd_id", nullable = false)
-	private EventCategory eventCategory;
-
+	@JoinColumn(name = "even_cd_id")
+	private Event event;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "evst_tx_status", nullable = false)
+	private EventStatusEnum status;
+	
+	@Column(name = "evst_dt_start_date", nullable = false)
+	private OffsetDateTime startDate;
+	
+	@Column(name = "evst_dt_finish_date", nullable = false)
+	private OffsetDateTime finishDate;
+	
 }

@@ -36,7 +36,7 @@ public class EventParticipant {
 	@Column(name = "evpt_cd_id")
 	private UUID id;
 
-	@Column(name = "usac_cd_id", nullable = false)
+	@Column(name = "usac_cd_id", nullable = true)
 	private UUID userId;
 
 	@Column(name = "evpt_tx_name", nullable = false, length = 150)

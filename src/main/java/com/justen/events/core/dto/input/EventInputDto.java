@@ -4,8 +4,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import com.justen.events.core.enums.EventStatusEnum;
-
 import lombok.Data;
 
 /**
@@ -19,21 +17,13 @@ import lombok.Data;
 public class EventInputDto {
 
 	private String name;
-
 	private String description;
-
-	private EventStatusEnum status;
-
-	private OffsetDateTime startDate;
-
-	private OffsetDateTime endDate;
-
+	private List<EventStatusInputDto> status;
 	private byte[] regulationFile;
-
-	private UUID eventTypeId;
-
+	private EventTypeInputDto type;
 	private List<EventCategoryInputDto> categories;
-	
-	private UUID parentEvent;
+	private UUID parentId;
+	private OffsetDateTime createdAt;
+	private OffsetDateTime updatedAt;
 
 }
