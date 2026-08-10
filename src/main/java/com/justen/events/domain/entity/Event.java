@@ -45,11 +45,7 @@ public class Event {
 	@Column(name = "even_tx_description")
 	private String description;
 
-	@OneToMany(
-			mappedBy = "event",
-			fetch = FetchType.LAZY,
-			cascade = CascadeType.ALL,
-			orphanRemoval = true)
+	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventStatus> status;
 
 	@Lob
@@ -61,18 +57,10 @@ public class Event {
 	@JoinColumn(name = "evtp_cd_id", nullable = false)
 	private EventType type;
 
-	@OneToMany(
-			mappedBy = "event",
-			fetch = FetchType.LAZY,
-			cascade = CascadeType.ALL,
-			orphanRemoval = true)
+	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventCategory> categories;
 
-	@OneToMany(
-			mappedBy = "parent",
-			fetch = FetchType.LAZY,
-			cascade = CascadeType.ALL,
-			orphanRemoval = true)
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Event> subevents;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -85,4 +73,10 @@ public class Event {
 	@Column(name = "even_dt_updated_at")
 	private OffsetDateTime updatedAt;
 
+	public EventStatus getCurrentStatus() {
+		OffsetDateTime now = OffsetDateTime.now();
+
+		return this.status.stream().filter(s -> now.isAfter(s.getStartDate()) && now.isBefore(s.getFinishDate()))
+				.findFirst().orElse(null);
+	}
 }

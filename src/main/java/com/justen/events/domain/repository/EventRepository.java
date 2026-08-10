@@ -2,6 +2,8 @@ package com.justen.events.domain.repository;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.justen.events.domain.entity.Event;
@@ -14,5 +16,7 @@ import com.justen.events.domain.entity.Event;
  *
  */
 public interface EventRepository extends JpaRepository<Event, UUID> {
+
+    Page<Event> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
 }
