@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.justen.events.domain.entity.EventCategory;
 import com.justen.events.domain.entity.EventParticipant;
+import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.EventCategoryRepository;
 import com.justen.events.domain.repository.EventParticipantRepository;
 
@@ -34,7 +35,7 @@ public class EventParticipantService {
 
 	public EventParticipant getById(UUID id) {
 		return eventParticipantRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("EventParticipant not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("EventParticipant not found with id: " + id));
 	}
 
 	public Page<EventParticipant> getAll(Pageable pageable, String filter) {

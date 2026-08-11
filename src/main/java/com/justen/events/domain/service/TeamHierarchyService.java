@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.justen.events.core.types.TeamHierarchyId;
 import com.justen.events.domain.entity.TeamHierarchy;
+import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.TeamHierarchyRepository;
 
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class TeamHierarchyService {
 
 	public TeamHierarchy getById(TeamHierarchyId id) {
 		return teamHierarchyRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("TeamHierarchy not found"));
+				.orElseThrow(() -> new EntityNotFoundException("TeamHierarchy not found"));
 	}
 
 	public Page<TeamHierarchy> getAll(Pageable pageable) {

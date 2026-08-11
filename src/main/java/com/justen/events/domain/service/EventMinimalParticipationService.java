@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.justen.events.domain.entity.EventMinimalParticipation;
+import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.EventMinimalParticipationRepository;
 
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class EventMinimalParticipationService {
 
 	public EventMinimalParticipation getById(UUID id) {
 		return eventMinimalParticipationRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("EventMinimalParticipation not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("EventMinimalParticipation not found with id: " + id));
 	}
 
 	public Page<EventMinimalParticipation> getAll(Pageable pageable) {

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.justen.events.domain.entity.Team;
+import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.TeamRepository;
 
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class TeamService {
 
 	public Team getById(UUID id) {
 		return teamRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Team not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
 	}
 
 	public Page<Team> getAll(Pageable pageable, String filter) {

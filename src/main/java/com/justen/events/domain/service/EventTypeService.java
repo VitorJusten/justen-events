@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.justen.events.domain.entity.EventType;
+import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.EventTypeRepository;
 
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class EventTypeService {
 
 	public EventType getById(UUID id) {
 		return eventTypeRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("EventType not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("EventType not found with id: " + id));
 	}
 
 	public Page<EventType> getAll(Pageable pageable, String filter) {

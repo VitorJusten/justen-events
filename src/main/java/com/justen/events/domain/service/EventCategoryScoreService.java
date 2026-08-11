@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.justen.events.domain.entity.EventCategoryScore;
+import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.EventCategoryScoreRepository;
 
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class EventCategoryScoreService {
 
 	public EventCategoryScore getById(UUID id) {
 		return eventCategoryScoreRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("EventCategoryScore not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("EventCategoryScore not found with id: " + id));
 	}
 
 	public Page<EventCategoryScore> getAll(Pageable pageable) {

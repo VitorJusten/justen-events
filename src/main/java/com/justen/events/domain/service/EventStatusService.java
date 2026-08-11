@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.justen.events.domain.entity.EventStatus;
+import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.EventStatusRepository;
 
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class EventStatusService {
 
 	public EventStatus getById(UUID id) {
 		return eventStatusRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("EventStatus not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("EventStatus not found with id: " + id));
 	}
 
 	public Page<EventStatus> getAll(Pageable pageable) {
