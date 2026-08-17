@@ -1,9 +1,7 @@
 package com.justen.events.core.dto;
 
-import java.util.List;
 import java.util.UUID;
 
-import com.justen.events.domain.entity.Event;
 import com.justen.events.domain.entity.EventMinimalParticipation;
 
 import lombok.Data;
@@ -22,8 +20,6 @@ public class EventMinimalParticipationDto {
 
 	private UUID id;
 
-	private List<Event> events;
-
 	private Integer quantityEvents;
 
 	private Integer minimalPosition;
@@ -33,7 +29,6 @@ public class EventMinimalParticipationDto {
 	public EventMinimalParticipationDto(EventMinimalParticipation entity) {
 		if (entity != null) {
 			this.id = entity.getId();
-			this.events = entity.getEvents();
 			this.quantityEvents = entity.getQuantityEvents();
 			this.minimalPosition = entity.getMinimalPosition();
 			if (entity.getEventCategory() != null) {

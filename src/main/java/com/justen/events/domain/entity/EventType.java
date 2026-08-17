@@ -27,10 +27,10 @@ public class EventType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
-	@Column(name = "evtp_cd_id")
+	@Column(name = "evty_cd_id")
 	private UUID id;
 
-	@Column(name = "evtp_tx_name", nullable = false, length = 150)
+	@Column(name = "evty_tx_name", nullable = false, length = 150)
 	private String name;
 
 }

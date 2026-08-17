@@ -11,9 +11,9 @@
 		<sql>
 			<![CDATA[
 			CREATE TABLE event_type (
-				evtp_cd_id UUID NOT NULL,
-				evtp_tx_name VARCHAR(150) NOT NULL,
-				CONSTRAINT pk_event_type PRIMARY KEY (evtp_cd_id)
+				evty_cd_id UUID NOT NULL,
+				evty_tx_name VARCHAR(150) NOT NULL,
+				CONSTRAINT pk_event_type PRIMARY KEY (evty_cd_id)
 			);
 
 			CREATE TABLE team (
@@ -23,17 +23,27 @@
 				CONSTRAINT pk_team PRIMARY KEY (team_cd_id)
 			);
 
+			CREATE TABLE event_minimal_participation (
+				evmp_cd_id UUID NOT NULL,
+				evmp_nm_quantity_events INTEGER NOT NULL,
+				evmp_nm_minimal_position INTEGER NOT NULL,
+				evca_cd_id UUID NOT NULL,
+				CONSTRAINT pk_event_minimal_participation PRIMARY KEY (evmp_cd_id)
+			);
+
 			CREATE TABLE event (
 				even_cd_id UUID NOT NULL,
 				even_tx_name VARCHAR(255) NOT NULL,
 				even_tx_description VARCHAR(255),
+				evmp_cd_id UUID,
 				even_bt_regulation BYTEA,
-				evtp_cd_id UUID NOT NULL,
+				evty_cd_id UUID NOT NULL,
 				even_cd_parent UUID,
 				even_dt_created_at TIMESTAMPTZ NOT NULL,
 				even_dt_updated_at TIMESTAMPTZ,
 				CONSTRAINT pk_event PRIMARY KEY (even_cd_id),
-				CONSTRAINT fk_event_type FOREIGN KEY (evtp_cd_id) REFERENCES event_type(evtp_cd_id),
+				CONSTRAINT fk_event_minimal_participation FOREIGN KEY (evmp_cd_id) REFERENCES event_minimal_participation(evmp_cd_id),
+				CONSTRAINT fk_event_type FOREIGN KEY (evty_cd_id) REFERENCES event_type(evty_cd_id),
 				CONSTRAINT fk_event_parent FOREIGN KEY (even_cd_parent) REFERENCES event(even_cd_id)
 			);
 
@@ -47,52 +57,31 @@
 				CONSTRAINT fk_event_status_event FOREIGN KEY (even_cd_id) REFERENCES event(even_cd_id)
 			);
 
-			CREATE TABLE event_participant (
-				evpt_cd_id UUID NOT NULL,
-				usac_cd_id UUID,
-				evpt_tx_name VARCHAR(150) NOT NULL,
-				team_cd_id UUID,
-				evpt_js_metadata JSONB,
-				CONSTRAINT pk_event_participant PRIMARY KEY (evpt_cd_id),
-				CONSTRAINT fk_event_participant_team FOREIGN KEY (team_cd_id) REFERENCES team(team_cd_id)
-			);
-
-			CREATE TABLE event_minimal_participation (
-				evmp_cd_id UUID NOT NULL,
-				evmp_nm_quantity_events INTEGER NOT NULL,
-				evmp_nm_minimal_position INTEGER NOT NULL,
-				evca_cd_id UUID NOT NULL,
-				CONSTRAINT pk_event_minimal_participation PRIMARY KEY (evmp_cd_id)
-			);
-
 			CREATE TABLE event_category (
-				evct_cd_id UUID NOT NULL,
-				evct_tx_name VARCHAR(100) NOT NULL,
-				evct_nm_order INTEGER NOT NULL,
-				evct_nm_participants_limit INTEGER,
+				evca_cd_id UUID NOT NULL,
+				evca_tx_name VARCHAR(100) NOT NULL,
+				evca_nm_order INTEGER NOT NULL,
+				evca_nm_participants_limit INTEGER,
+				evca_nm_teams_limit INTEGER,
 				evmp_cd_id UUID,
 				even_cd_id UUID NOT NULL,
-				CONSTRAINT pk_event_category PRIMARY KEY (evct_cd_id),
+				CONSTRAINT pk_event_category PRIMARY KEY (evca_cd_id),
 				CONSTRAINT fk_event_category_minimal_participation FOREIGN KEY (evmp_cd_id) REFERENCES event_minimal_participation(evmp_cd_id),
 				CONSTRAINT fk_event_category_event FOREIGN KEY (even_cd_id) REFERENCES event(even_cd_id)
 			);
 
-			ALTER TABLE event_minimal_participation ADD CONSTRAINT fk_event_minimal_participation_category FOREIGN KEY (evca_cd_id) REFERENCES event_category(evct_cd_id);
+			ALTER TABLE event_minimal_participation ADD CONSTRAINT fk_event_minimal_participation_category FOREIGN KEY (evca_cd_id) REFERENCES event_category(evca_cd_id);
 
-			CREATE TABLE event_category_participant (
-				evct_cd_id UUID NOT NULL,
-				evpt_cd_id UUID NOT NULL,
-				CONSTRAINT pk_event_category_participant PRIMARY KEY (evct_cd_id, evpt_cd_id),
-				CONSTRAINT fk_evctpart_category FOREIGN KEY (evct_cd_id) REFERENCES event_category(evct_cd_id) ON DELETE CASCADE,
-				CONSTRAINT fk_evctpart_participant FOREIGN KEY (evpt_cd_id) REFERENCES event_participant(evpt_cd_id) ON DELETE CASCADE
-			);
-
-			CREATE TABLE event_category_team (
-				evct_cd_id UUID NOT NULL,
-				team_cd_id UUID NOT NULL,
-				CONSTRAINT pk_event_category_team PRIMARY KEY (evct_cd_id, team_cd_id),
-				CONSTRAINT fk_evctteam_category FOREIGN KEY (evct_cd_id) REFERENCES event_category(evct_cd_id) ON DELETE CASCADE,
-				CONSTRAINT fk_evctteam_team FOREIGN KEY (team_cd_id) REFERENCES team(team_cd_id) ON DELETE CASCADE
+			CREATE TABLE event_participant (
+				evpa_cd_id UUID NOT NULL,
+				usac_cd_id UUID,
+				evpa_tx_name VARCHAR(150) NOT NULL,
+				team_cd_id UUID,
+				evpa_js_metadata JSONB,
+				evca_cd_id UUID,
+				CONSTRAINT pk_event_participant PRIMARY KEY (evpa_cd_id),
+				CONSTRAINT fk_event_participant_team FOREIGN KEY (team_cd_id) REFERENCES team(team_cd_id),
+				CONSTRAINT fk_event_participant_category FOREIGN KEY (evca_cd_id) REFERENCES event_category(evca_cd_id)
 			);
 
 			CREATE TABLE event_category_result (
@@ -106,9 +95,9 @@
 				evcr_nm_points DECIMAL(10, 2) NOT NULL,
 				evcr_tx_status VARCHAR(20) NOT NULL,
 				evcr_js_metadata JSONB,
-				evct_cd_id UUID NOT NULL,
+				evca_cd_id UUID NOT NULL,
 				CONSTRAINT pk_event_category_result PRIMARY KEY (evcr_cd_id),
-				CONSTRAINT fk_event_category_result_category FOREIGN KEY (evct_cd_id) REFERENCES event_category(evct_cd_id)
+				CONSTRAINT fk_event_category_result_category FOREIGN KEY (evca_cd_id) REFERENCES event_category(evca_cd_id)
 			);
 
 			CREATE TABLE event_category_score (
@@ -116,9 +105,9 @@
 				evcs_nm_position INTEGER NOT NULL,
 				evcs_nm_points DECIMAL(10, 2) NOT NULL,
 				evcs_tx_score_type VARCHAR(20) NOT NULL,
-				evct_cd_id UUID NOT NULL,
+				evca_cd_id UUID NOT NULL,
 				CONSTRAINT pk_event_category_score PRIMARY KEY (evcs_cd_id),
-				CONSTRAINT fk_event_category_score_category FOREIGN KEY (evct_cd_id) REFERENCES event_category(evct_cd_id)
+				CONSTRAINT fk_event_category_score_category FOREIGN KEY (evca_cd_id) REFERENCES event_category(evca_cd_id)
 			);
 
 			CREATE TABLE team_hierarchy (
@@ -129,17 +118,37 @@
 				CONSTRAINT fk_team_hierarchy_team FOREIGN KEY (team_cd_id) REFERENCES team(team_cd_id) ON DELETE CASCADE
 			);
 
-			CREATE INDEX idx_event_evtp ON event(evtp_cd_id);
+			-- Foreign key indexes
+			CREATE INDEX idx_event_evty ON event(evty_cd_id);
 			CREATE INDEX idx_event_parent ON event(even_cd_parent);
+			CREATE INDEX idx_event_evmp ON event(evmp_cd_id);
 			CREATE INDEX idx_event_status_event ON event_status(even_cd_id);
 			CREATE INDEX idx_event_participant_team ON event_participant(team_cd_id);
+			CREATE INDEX idx_event_participant_evca ON event_participant(evca_cd_id);
 			CREATE INDEX idx_event_minimal_participation_category ON event_minimal_participation(evca_cd_id);
 			CREATE INDEX idx_event_category_minimal ON event_category(evmp_cd_id);
 			CREATE INDEX idx_event_category_event ON event_category(even_cd_id);
-			CREATE INDEX idx_evctpart_participant ON event_category_participant(evpt_cd_id);
-			CREATE INDEX idx_evctteam_team ON event_category_team(team_cd_id);
-			CREATE INDEX idx_event_category_result_category ON event_category_result(evct_cd_id);
-			CREATE INDEX idx_event_category_score_category ON event_category_score(evct_cd_id);
+			CREATE INDEX idx_event_category_result_category ON event_category_result(evca_cd_id);
+			CREATE INDEX idx_event_category_score_category ON event_category_score(evca_cd_id);
+			CREATE INDEX idx_team_hierarchy_user ON team_hierarchy(usac_cd_id);
+
+			-- High Volume Lookup Indexes
+			CREATE INDEX idx_event_participant_user ON event_participant(usac_cd_id);
+			CREATE INDEX idx_event_category_result_user ON event_category_result(usac_cd_id);
+			CREATE INDEX idx_event_category_result_team ON event_category_result(team_cd_id);
+
+			-- Composite & Leaderboard Indexes
+			CREATE INDEX idx_event_status_dates ON event_status(even_cd_id, evst_dt_start_date, evst_dt_finish_date);
+			CREATE INDEX idx_event_status_type ON event_status(evst_tx_status);
+			CREATE INDEX idx_event_category_order ON event_category(even_cd_id, evca_nm_order);
+			CREATE INDEX idx_event_category_result_pos ON event_category_result(evca_cd_id, evcr_nm_position);
+			CREATE INDEX idx_event_category_score_pos ON event_category_score(evca_cd_id, evcs_nm_position);
+
+			-- Text Search & Case Insensitive Indexes
+			CREATE INDEX idx_event_name_lower ON event(LOWER(even_tx_name));
+			CREATE INDEX idx_team_name_lower ON team(LOWER(team_tx_name));
+			CREATE INDEX idx_event_participant_name ON event_participant(evpa_tx_name);
+			CREATE INDEX idx_event_type_name ON event_type(evty_tx_name);
 			]]>
 		</sql>
 
@@ -147,13 +156,11 @@
 			DROP TABLE IF EXISTS team_hierarchy;
 			DROP TABLE IF EXISTS event_category_score;
 			DROP TABLE IF EXISTS event_category_result;
-			DROP TABLE IF EXISTS event_category_team;
-			DROP TABLE IF EXISTS event_category_participant;
-			DROP TABLE IF EXISTS event_category;
-			DROP TABLE IF EXISTS event_minimal_participation;
 			DROP TABLE IF EXISTS event_participant;
+			DROP TABLE IF EXISTS event_category;
 			DROP TABLE IF EXISTS event_status;
 			DROP TABLE IF EXISTS event;
+			DROP TABLE IF EXISTS event_minimal_participation;
 			DROP TABLE IF EXISTS team;
 			DROP TABLE IF EXISTS event_type;
 		</rollback>

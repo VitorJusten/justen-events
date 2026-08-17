@@ -36,7 +36,7 @@ public class EventMinimalParticipation {
 	private UUID id;
 	
 	@OneToMany(
-			mappedBy = "category",
+			mappedBy = "eventMinimalParticipation",
 			fetch = FetchType.LAZY)
 	private List<Event> events;
 

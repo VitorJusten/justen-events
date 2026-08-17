@@ -24,8 +24,8 @@ public class EventCategoryInputDto {
 	private String name;
 	private Integer order;
 	private Integer participantsLimit;
+	private Integer teamsLimit;
 	private List<EventParticipantInputDto> participants;
-	private List<TeamInputDto> teams;
 	private EventMinimalParticipationInputDto minimalParticipation;
 	private List<EventCategoryScoreInputDto> scores;
 	private List<EventCategoryResultInputDto> results;
@@ -36,6 +36,7 @@ public class EventCategoryInputDto {
 		category.setName(this.name);
 		category.setOrder(this.order);
 		category.setParticipantsLimit(this.participantsLimit);
+		category.setTeamsLimit(this.teamsLimit);
 		if (this.eventId != null) {
 			Event event = new Event();
 			event.setId(this.eventId);
@@ -43,9 +44,6 @@ public class EventCategoryInputDto {
 		}
 		if (this.participants != null) {
 			category.setParticipants(this.participants.stream().map(EventParticipantInputDto::toEntity).toList());
-		}
-		if (this.teams != null) {
-			category.setTeams(this.teams.stream().map(TeamInputDto::toEntity).toList());
 		}
 		if (this.minimalParticipation != null) {
 			EventMinimalParticipation emp = this.minimalParticipation.toEntity();

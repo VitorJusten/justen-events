@@ -49,7 +49,7 @@ public class EventCategoryScore {
 	private ParticipantTypeEnum scoreType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "evct_cd_id", nullable = false)
+	@JoinColumn(name = "evca_cd_id", nullable = false)
 	private EventCategory category;
 
 }

@@ -36,31 +36,27 @@ public class EventCategory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
-	@Column(name = "evct_cd_id")
+	@Column(name = "evca_cd_id")
 	private UUID id;
 
-	@Column(name = "evct_tx_name", nullable = false, length = 100)
+	@Column(name = "evca_tx_name", nullable = false, length = 100)
 	private String name;
 
-	@Column(name = "evct_nm_order", nullable = false)
+	@Column(name = "evca_nm_order", nullable = false)
 	private Integer order;
 
-	@Column(name = "evct_nm_participants_limit")
+	@Column(name = "evca_nm_participants_limit")
 	private Integer participantsLimit;
+	
+	@Column(name = "evca_nm_teams_limit")
+	private Integer teamsLimit;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-			name = "event_category_participant",
-			joinColumns = @JoinColumn(name = "evct_cd_id"),
-			inverseJoinColumns = @JoinColumn(name = "evpt_cd_id"))
+			name = "event_participant",
+			joinColumns = @JoinColumn(name = "evca_cd_id"),
+			inverseJoinColumns = @JoinColumn(name = "evpa_cd_id"))
 	private List<EventParticipant> participants;
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "event_category_team",
-			joinColumns = @JoinColumn(name = "evct_cd_id"),
-			inverseJoinColumns = @JoinColumn(name = "team_cd_id"))
-	private List<Team> teams;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "evmp_cd_id")

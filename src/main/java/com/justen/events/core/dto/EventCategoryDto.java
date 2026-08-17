@@ -26,10 +26,10 @@ public class EventCategoryDto {
 	private Integer order;
 
 	private Integer participantsLimit;
-
+	
+	private Integer teamsLimit;
+	
 	private List<EventParticipantDto> participants;
-
-	private List<TeamDto> teams;
 
 	private EventMinimalParticipationDto minimalParticipation;
 
@@ -45,11 +45,9 @@ public class EventCategoryDto {
 			this.name = entity.getName();
 			this.order = entity.getOrder();
 			this.participantsLimit = entity.getParticipantsLimit();
+			this.teamsLimit = entity.getTeamsLimit();
 			if (entity.getParticipants() != null) {
 				this.participants = entity.getParticipants().stream().map(EventParticipantDto::new).toList();
-			}
-			if (entity.getTeams() != null) {
-				this.teams = entity.getTeams().stream().map(TeamDto::new).toList();
 			}
 			if (entity.getMinimalParticipation() != null) {
 				this.minimalParticipation = new EventMinimalParticipationDto(entity.getMinimalParticipation());

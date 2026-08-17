@@ -33,13 +33,13 @@ public class EventParticipant {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
-	@Column(name = "evpt_cd_id")
+	@Column(name = "evpa_cd_id")
 	private UUID id;
 
 	@Column(name = "usac_cd_id", nullable = true)
 	private UUID userId;
 
-	@Column(name = "evpt_tx_name", nullable = false, length = 150)
+	@Column(name = "evpa_tx_name", nullable = false, length = 150)
 	private String name;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -47,7 +47,7 @@ public class EventParticipant {
 	private Team team;
 
 	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(name = "evpt_js_metadata", columnDefinition = "jsonb")
+	@Column(name = "evpa_js_metadata", columnDefinition = "jsonb")
 	private String metadata;
 
 }

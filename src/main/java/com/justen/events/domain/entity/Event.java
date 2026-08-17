@@ -44,6 +44,10 @@ public class Event {
 
 	@Column(name = "even_tx_description")
 	private String description;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "evmp_cd_id")
+	private EventMinimalParticipation eventMinimalParticipation;
 
 	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventStatus> status;
@@ -54,7 +58,7 @@ public class Event {
 	private byte[] regulationFile;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "evtp_cd_id", nullable = false)
+	@JoinColumn(name = "evty_cd_id", nullable = false)
 	private EventType type;
 
 	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
