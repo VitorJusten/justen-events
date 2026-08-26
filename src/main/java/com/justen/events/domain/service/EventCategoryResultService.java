@@ -6,9 +6,13 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.justen.events.domain.entity.EventCategory;
 import com.justen.events.domain.entity.EventCategoryResult;
+import com.justen.events.domain.exception.BusinessException;
 import com.justen.events.domain.exception.EntityNotFoundException;
+import com.justen.events.domain.repository.EventCategoryRepository;
 import com.justen.events.domain.repository.EventCategoryResultRepository;
 
 import lombok.AllArgsConstructor;
@@ -25,8 +29,19 @@ import lombok.AllArgsConstructor;
 public class EventCategoryResultService {
 
 	private final EventCategoryResultRepository eventCategoryResultRepository;
+	private final EventCategoryRepository eventCategoryRepository;
+	private final EventService eventService;
 
+	@Transactional
 	public EventCategoryResult create(EventCategoryResult result) {
+		if (result.getCategory() == null || result.getCategory().getId() == null) {
+			throw new BusinessException("Category is required for result creation");
+		}
+		EventCategory category = eventCategoryRepository.findById(result.getCategory().getId())
+				.orElseThrow(() -> new EntityNotFoundException("Category not found"));
+		if (category.getEvent() != null) {
+			eventService.validateCanManageEvent(category.getEvent());
+		}
 		return eventCategoryResultRepository.save(result);
 	}
 
@@ -39,8 +54,13 @@ public class EventCategoryResultService {
 		return eventCategoryResultRepository.findAll(pageable);
 	}
 
+	@Transactional
 	public EventCategoryResult update(UUID id, EventCategoryResult result) {
 		EventCategoryResult existing = getById(id);
+		if (existing.getCategory() != null && existing.getCategory().getEvent() != null) {
+			eventService.validateCanManageEvent(existing.getCategory().getEvent());
+		}
+
 		existing.setScoreType(result.getScoreType());
 		existing.setUserId(result.getUserId());
 		existing.setParticipantName(result.getParticipantName());
@@ -53,8 +73,12 @@ public class EventCategoryResultService {
 		return eventCategoryResultRepository.save(existing);
 	}
 
+	@Transactional
 	public void delete(UUID id) {
-		getById(id);
+		EventCategoryResult existing = getById(id);
+		if (existing.getCategory() != null && existing.getCategory().getEvent() != null) {
+			eventService.validateCanManageEvent(existing.getCategory().getEvent());
+		}
 		eventCategoryResultRepository.deleteById(id);
 	}
 

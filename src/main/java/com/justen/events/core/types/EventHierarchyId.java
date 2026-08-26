@@ -19,12 +19,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class TeamHierarchyId implements Serializable {
+public class EventHierarchyId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private UUID userId;
 
-	private UUID teamId;
+	private UUID eventId;
 
 }

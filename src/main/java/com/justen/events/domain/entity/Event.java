@@ -45,6 +45,12 @@ public class Event {
 	@Column(name = "even_tx_description")
 	private String description;
 	
+	@Column(name = "usac_cd_id", nullable = false)
+	private UUID authorId;
+	
+	@Column(name = "usac_tx_username", nullable = false)
+	private String authorName;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evmp_cd_id")
 	private EventMinimalParticipation eventMinimalParticipation;
@@ -63,6 +69,9 @@ public class Event {
 
 	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventCategory> categories;
+
+	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<EventHierarchy> eventHierarchy;
 
 	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Event> subevents;

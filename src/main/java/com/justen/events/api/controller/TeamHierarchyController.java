@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.justen.events.core.dto.TeamHierarchyDto;
 import com.justen.events.core.dto.input.TeamHierarchyInputDto;
+import com.justen.events.core.enums.TeamRoleEnum;
 import com.justen.events.core.types.TeamHierarchyId;
 import com.justen.events.domain.service.TeamHierarchyService;
 
@@ -78,6 +79,33 @@ public class TeamHierarchyController {
 	@GetMapping("/by-user")
 	public List<TeamHierarchyDto> getTeamsByUser(@RequestParam UUID userId) {
 		return teamHierarchyService.getTeamsByUser(userId).stream().map(TeamHierarchyDto::new).toList();
+	}
+
+	@PostMapping("/invite")
+	public TeamHierarchyDto inviteUser(@RequestParam UUID teamId, @RequestParam UUID userId,
+			@RequestParam(required = false) TeamRoleEnum role) {
+		return new TeamHierarchyDto(teamHierarchyService.inviteUser(teamId, userId, role));
+	}
+
+	@PostMapping("/request-join")
+	public TeamHierarchyDto requestToJoin(@RequestParam UUID teamId) {
+		return new TeamHierarchyDto(teamHierarchyService.requestToJoin(teamId));
+	}
+
+	@PostMapping("/user-respond")
+	public TeamHierarchyDto userRespondInvite(@RequestParam UUID teamId, @RequestParam boolean accept) {
+		return new TeamHierarchyDto(teamHierarchyService.userRespondInvite(teamId, accept));
+	}
+
+	@PostMapping("/team-respond")
+	public TeamHierarchyDto teamRespondRequest(@RequestParam UUID teamId, @RequestParam UUID userId,
+			@RequestParam boolean accept) {
+		return new TeamHierarchyDto(teamHierarchyService.teamRespondRequest(teamId, userId, accept));
+	}
+
+	@PostMapping("/block")
+	public TeamHierarchyDto blockUser(@RequestParam UUID teamId, @RequestParam UUID userId) {
+		return new TeamHierarchyDto(teamHierarchyService.blockUser(teamId, userId));
 	}
 
 }

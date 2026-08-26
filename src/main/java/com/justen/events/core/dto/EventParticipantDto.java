@@ -3,7 +3,6 @@ package com.justen.events.core.dto;
 import java.util.UUID;
 
 import com.justen.events.domain.entity.EventParticipant;
-import com.justen.events.domain.entity.Team;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,7 @@ public class EventParticipantDto {
 
 	private String name;
 
-	private Team team;
+	private TeamDto team;
 
 	private String metadata;
 
@@ -34,7 +33,9 @@ public class EventParticipantDto {
 			this.id = entity.getId();
 			this.userId = entity.getUserId();
 			this.name = entity.getName();
-			this.team = entity.getTeam();
+			if (entity.getTeam() != null) {
+				this.team = new TeamDto(entity.getTeam());
+			}
 			this.metadata = entity.getMetadata();
 		}
 	}

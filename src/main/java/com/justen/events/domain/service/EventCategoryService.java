@@ -6,8 +6,11 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.justen.events.domain.entity.Event;
 import com.justen.events.domain.entity.EventCategory;
+import com.justen.events.domain.exception.BusinessException;
 import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.EventCategoryRepository;
 
@@ -25,8 +28,14 @@ import lombok.AllArgsConstructor;
 public class EventCategoryService {
 
 	private final EventCategoryRepository eventCategoryRepository;
+	private final EventService eventService;
 
+	@Transactional
 	public EventCategory create(EventCategory eventCategory) {
+		if (eventCategory.getEvent() == null || eventCategory.getEvent().getId() == null) {
+			throw new BusinessException("Event is required for category creation");
+		}
+		eventService.validateCanManageEventById(eventCategory.getEvent().getId());
 		return eventCategoryRepository.save(eventCategory);
 	}
 
@@ -42,16 +51,26 @@ public class EventCategoryService {
 		return eventCategoryRepository.findAll(pageable);
 	}
 
+	@Transactional
 	public EventCategory update(UUID id, EventCategory eventCategory) {
 		EventCategory existing = getById(id);
+		if (existing.getEvent() != null) {
+			eventService.validateCanManageEvent(existing.getEvent());
+		}
+
 		existing.setName(eventCategory.getName());
 		existing.setOrder(eventCategory.getOrder());
 		existing.setParticipantsLimit(eventCategory.getParticipantsLimit());
+		existing.setTeamsLimit(eventCategory.getTeamsLimit());
 		return eventCategoryRepository.save(existing);
 	}
 
+	@Transactional
 	public void delete(UUID id) {
-		getById(id);
+		EventCategory existing = getById(id);
+		if (existing.getEvent() != null) {
+			eventService.validateCanManageEvent(existing.getEvent());
+		}
 		eventCategoryRepository.deleteById(id);
 	}
 

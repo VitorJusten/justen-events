@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v0.01.0_202608260000" author="Vitor Justen">
+        <comment>Create event_hierarchy table and add status column to team_hierarchy</comment>
+
+        <sql>
+            <![CDATA[
+                CREATE TABLE event_hierarchy (
+                    even_cd_id UUID NOT NULL,
+                    usac_cd_id UUID NOT NULL,
+                    evhi_tx_role VARCHAR(50) NOT NULL,
+                    evhi_tx_status VARCHAR(50) NOT NULL,
+                    CONSTRAINT pk_event_hierarchy PRIMARY KEY (even_cd_id, usac_cd_id),
+                    CONSTRAINT fk_event_hierarchy_event FOREIGN KEY (even_cd_id) REFERENCES event(even_cd_id) ON DELETE CASCADE
+                );
+
+                CREATE INDEX idx_event_hierarchy_user ON event_hierarchy(usac_cd_id);
+                CREATE INDEX idx_event_hierarchy_role ON event_hierarchy(evhi_tx_role);
+                CREATE INDEX idx_event_hierarchy_status ON event_hierarchy(evhi_tx_status);
+
+                ALTER TABLE team_hierarchy
+                    ADD COLUMN tehi_tx_status VARCHAR(50) DEFAULT 'ACCEPTED' NOT NULL;
+
+                CREATE INDEX idx_team_hierarchy_status ON team_hierarchy(tehi_tx_status);
+            ]]>
+        </sql>
+
+        <rollback>
+            <sql>
+                <![CDATA[
+                    DROP INDEX IF EXISTS idx_team_hierarchy_status;
+
+                    ALTER TABLE team_hierarchy
+                        DROP COLUMN IF EXISTS tehi_tx_status;
+
+                    DROP TABLE IF EXISTS event_hierarchy;
+                ]]>
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

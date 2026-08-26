@@ -26,6 +26,10 @@ public class EventDto {
 
 	private String description;
 
+	private UUID authorId;
+
+	private String authorName;
+
 	private List<EventStatusDto> status;
 
 	private byte[] regulationFile;
@@ -33,6 +37,8 @@ public class EventDto {
 	private EventTypeDto type;
 
 	private List<EventCategoryDto> categories;
+
+	private List<EventHierarchyDto> eventHierarchy;
 
 	private List<EventDto> subevents;
 
@@ -47,6 +53,8 @@ public class EventDto {
 			this.id = entity.getId();
 			this.name = entity.getName();
 			this.description = entity.getDescription();
+			this.authorId = entity.getAuthorId();
+			this.authorName = entity.getAuthorName();
 			this.regulationFile = entity.getRegulationFile();
 			if (entity.getStatus() != null) {
 				this.status = entity.getStatus().stream().map(EventStatusDto::new).toList();
@@ -56,6 +64,9 @@ public class EventDto {
 			}
 			if (entity.getCategories() != null) {
 				this.categories = entity.getCategories().stream().map(EventCategoryDto::new).toList();
+			}
+			if (entity.getEventHierarchy() != null) {
+				this.eventHierarchy = entity.getEventHierarchy().stream().map(EventHierarchyDto::new).toList();
 			}
 			if (entity.getSubevents() != null) {
 				this.subevents = entity.getSubevents().stream().map(EventDto::new).toList();

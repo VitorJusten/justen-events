@@ -2,6 +2,7 @@ package com.justen.events.core.dto.input;
 
 import java.util.UUID;
 
+import com.justen.events.core.enums.HierarchyStatusEnum;
 import com.justen.events.core.enums.TeamRoleEnum;
 import com.justen.events.core.types.TeamHierarchyId;
 import com.justen.events.domain.entity.Team;
@@ -25,6 +26,8 @@ public class TeamHierarchyInputDto {
 
 	private TeamRoleEnum role;
 
+	private HierarchyStatusEnum status;
+
 	public TeamHierarchy toEntity() {
 		TeamHierarchy entity = new TeamHierarchy();
 		TeamHierarchyId id = new TeamHierarchyId();
@@ -33,6 +36,7 @@ public class TeamHierarchyInputDto {
 		entity.setId(id);
 		entity.setUserId(this.userId);
 		entity.setRole(this.role);
+		entity.setStatus(this.status != null ? this.status : HierarchyStatusEnum.USER_DECISION);
 		if (this.teamId != null) {
 			Team team = new Team();
 			team.setId(this.teamId);

@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import com.justen.events.core.enums.EventStatusEnum;
-import com.justen.events.domain.entity.Event;
 import com.justen.events.domain.entity.EventStatus;
 
 import lombok.Data;
@@ -23,7 +22,7 @@ public class EventStatusDto {
 
 	private UUID id;
 
-	private Event event;
+	private UUID eventId;
 
 	private EventStatusEnum status;
 
@@ -34,7 +33,9 @@ public class EventStatusDto {
 	public EventStatusDto(EventStatus entity) {
 		if (entity != null) {
 			this.id = entity.getId();
-			this.event = entity.getEvent();
+			if (entity.getEvent() != null) {
+				this.eventId = entity.getEvent().getId();
+			}
 			this.status = entity.getStatus();
 			this.startDate = entity.getStartDate();
 			this.finishDate = entity.getFinishDate();
