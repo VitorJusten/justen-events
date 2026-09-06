@@ -16,7 +16,6 @@ import com.justen.events.domain.entity.EventHierarchy;
 import com.justen.events.domain.exception.BusinessException;
 import com.justen.events.domain.exception.EntityNotFoundException;
 import com.justen.events.domain.repository.EventHierarchyRepository;
-import com.justen.infrastructure.enums.RoleEnum;
 import com.justen.infrastructure.utils.SecurityUtils;
 
 import lombok.AllArgsConstructor;
